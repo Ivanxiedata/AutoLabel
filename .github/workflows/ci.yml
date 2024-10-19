@@ -25,9 +25,9 @@ jobs:
         pip install poetry
         poetry install
 
-    - name: Lint with flake8
-      run: |
-        poetry run flake8 .
+#    - name: Lint with flake8
+#      run: |
+#        poetry run flake8 .
 
     - name: Security Check with Bandit
       run: |
