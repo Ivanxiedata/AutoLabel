@@ -4,6 +4,7 @@ from reportlab.lib.pagesizes import letter
 from googletrans import Translator
 import pandas as pd
 import io
+import PyPDF2
 
 class Label_Remarker:
     product_label_mapping = {
@@ -15,6 +16,16 @@ class Label_Remarker:
         'car': '20091',
         'Wrist': 'Wrist ball'
     }
+
+    def count_pdf_pages(self,pdf_file):
+        # Open the PDF file
+        with open(pdf_file, "rb") as file:
+            reader = PyPDF2.PdfReader(file)
+
+            # Get the total number of pages
+            num_pages = len(reader.pages)
+
+        return num_pages
 
     def find_column_name(self, df, search_term):
         # Search for a column name that contains the search term (case-insensitive)
@@ -112,6 +123,8 @@ class Label_Remarker:
         output_pdf = "marked_label_output/marked_labels_with_names.pdf"
         excel_file = "raw_label_input/raw_labels.xlsx"  # Excel file with dynamic column names
         self.mark_pdf_with_product_name_and_quantity(input_pdf, output_pdf, excel_file)
+        total_pages = self.count_pdf_pages(input_pdf)
+        print(f"Total number of pages in the PDF: {total_pages}")
 
 
 if __name__ == "__main__":
