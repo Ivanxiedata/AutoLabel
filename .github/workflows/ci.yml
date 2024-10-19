@@ -25,9 +25,18 @@ jobs:
         pip install poetry
         poetry install
 
+    - name: Lint with flake8
+      run: |
+        poetry run flake8 .
+
+    - name: Security Check with Bandit
+      run: |
+        poetry run bandit -r .
+
     - name: Set up PYTHONPATH
       run: echo "PYTHONPATH=$PYTHONPATH:$(pwd)" >> $GITHUB_ENV
 
-    - name: Run tests
+    - name: Run Tests with Coverage
       run: |
-        poetry run pytest tests/
+        poetry run pytest --cov=AutoLabel tests/
+
