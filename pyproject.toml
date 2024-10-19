@@ -18,6 +18,7 @@ openpyxl = "^3.1.5"
 pytest = "^8.3.3"
 flake8 = "^7.1.1"
 bandit = "^1.7.10"
+pytest-assume = "^2.4.3"
 
 [build-system]
 requires = ["poetry-core"]

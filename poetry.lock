@@ -625,6 +625,21 @@ pluggy = ">=1.5,<2"
 dev = ["argcomplete", "attrs (>=19.2)", "hypothesis (>=3.56)", "mock", "pygments (>=2.7.2)", "requests", "setuptools", "xmlschema"]
 
 [[package]]
+name = "pytest-assume"
+version = "2.4.3"
+description = "A pytest plugin that allows multiple failures per test"
+optional = false
+python-versions = "*"
+files = [
+    {file = "pytest-assume-2.4.3.tar.gz", hash = "sha256:983e90537660fd7aa18bb554693523020272e7edeee3e40435593297bcc6347e"},
+    {file = "pytest_assume-2.4.3-py3-none-any.whl", hash = "sha256:09074220213b87cf1f400609701a44b75078b4e69588c7227e061ff9b3ecf54b"},
+]
+
+[package.dependencies]
+pytest = ">=2.7"
+six = "*"
+
+[[package]]
 name = "python-dateutil"
 version = "2.9.0.post0"
 description = "Extensions to the standard Python datetime module"
@@ -813,4 +828,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "9b62d6cba3a0573c8598e0c2c44e9087f90c9f37c16dc91a7d7e8357e7dea7f4"
+content-hash = "8de0f09d348eea0cb1b95b7e6996f8b5e3097e093a7f214ffc9b8e19b18dc46c"
