@@ -33,22 +33,24 @@ def test_find_col_name():
         except KeyError:
             assume(True)
 
+
 def test_g_translator(mocker):
     lr = Label_Remarker()
 
     # Mock the Translator's translate method to simulate translation
-    # Replace the actual translation in the original function with mock data
     mock_translate = mocker.patch('AutoLabel.main.Translator.translate')
-    # simulate a successful translation response
     mock_translate.return_value.text = 'Hello'
 
-    with assume:
-        assume(lr.g_translator('你好') == 'Hello')
-        mock_translate.assert_called_once_with('你好', src='zh-cn', dest='en')
+    # Soft assertions using pytest_assume
+    assume(lr.g_translator('你好') == 'Hello')
+    mock_translate.assert_called_once_with('你好', src='zh-cn', dest='en')
 
-        assume(lr.g_translator('Car' == 'car'))
-        mock_translate.reset_mock()
+    # Test with non-Chinese product names (no translation needed)
+    assume(lr.g_translator('Car') == 'Car')
+    mock_translate.reset_mock()
 
-        mock_translate.side_effect = Exception('Translation failed')
-        assume(lr.g_translator('你好') == '你好')
+    # Simulate a translation failure
+    mock_translate.side_effect = Exception('Translation failed')
+    assume(lr.g_translator('你好') == '你好')
+
 
