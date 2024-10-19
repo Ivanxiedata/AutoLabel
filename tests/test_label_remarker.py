@@ -1,5 +1,5 @@
 import pytest
-from label.main import Label_Remarker
+from AutoLabel.main import Label_Remarker
 
 def test_contains_chinese():
     lr = Label_Remarker()
