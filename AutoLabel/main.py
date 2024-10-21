@@ -2,6 +2,7 @@ from PyPDF2 import PdfWriter, PdfReader
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 from googletrans import Translator
+
 import pandas as pd
 import io
 import PyPDF2
@@ -14,7 +15,9 @@ class Label_Remarker:
         '0090': '0090',
         '20091': '20091',
         'car': '20091',
-        'Wrist': 'Wrist ball'
+        'Wrist': 'Wrist ball',
+        'Glass':  'Glass oil'
+
     }
 
     def count_pdf_pages(self,pdf_file):
@@ -52,6 +55,26 @@ class Label_Remarker:
                 print(f"Translation error: {e}")
         return eng_prod_name
 
+    def translate_dataframe(self, df):
+        # Translate column names
+        translated_cols = []
+        for col in df.columns:
+            translated_col = self.g_translator(col)  # Use the existing g_translator method
+            translated_cols.append(translated_col)
+
+        # Assign the translated column names to the DataFrame
+        df.columns = translated_cols
+
+        # Translate values in specific columns, if required (e.g., 'Product name')
+        for col in df.columns:
+            if df[col].dtype == object:  # Only process columns with object type (likely strings)
+                df[col] = df[col].apply(
+                    lambda x: self.g_translator(str(x)) if pd.notna(x) and self.contains_chinese(str(x)) else x)
+
+        return df
+
+
+
     def validate_product_name(self, translated_product_name):
         # Validate product name by checking for partial matches in product_label_mapping
         for key in self.product_label_mapping:
@@ -63,9 +86,12 @@ class Label_Remarker:
         # Read the Excel file containing dynamic column names
         df = pd.read_excel(excel_file)
 
+        df = self.translate_dataframe(df)
+        print(df)
+
         # Dynamically find the column names for 'Product name' and 'The total'
-        product_name_col = self.find_column_name(df, 'The title of the product')  # Adjust for partial matches
-        quantity_col = self.find_column_name(df, 'The total')  # Partial match for 'The total'
+        product_name_col = self.find_column_name(df, 'Product name')  # Adjust for partial matches
+        quantity_col = self.find_column_name(df, 'Total product')  # Partial match for 'The total'
 
         # Open the input PDF
         reader = PdfReader(input_pdf)
@@ -80,6 +106,7 @@ class Label_Remarker:
             page = reader.pages[i]
             packet = io.BytesIO()
             can = canvas.Canvas(packet, pagesize=letter)
+            can.setFont("Helvetica", 6)
 
             # Check if the Product Name is valid (non-NaN) for the current row
             if pd.notna(df[product_name_col].iloc[i]):
@@ -88,7 +115,7 @@ class Label_Remarker:
 
                 # Validate the translated product name using the mapping
                 validated_eng_product_name = self.validate_product_name(eng_product_name)
-                print(f'The validated product name is {validated_eng_product_name}')
+                # print(f'The validated product name is {validated_eng_product_name}')
 
                 quantity = df[quantity_col].iloc[i]
 
@@ -120,11 +147,11 @@ class Label_Remarker:
     def main(self):
         # Example usage
         input_pdf = "raw_label_input/label1.pdf"
-        output_pdf = "marked_label_output/marked_labels_with_names.pdf"
+        output_pdf = "marked_label_output/marked_new_labels.pdf"
         excel_file = "raw_label_input/raw_labels.xlsx"  # Excel file with dynamic column names
         self.mark_pdf_with_product_name_and_quantity(input_pdf, output_pdf, excel_file)
-        total_pages = self.count_pdf_pages(input_pdf)
-        print(f"Total number of pages in the PDF: {total_pages}")
+        # total_pages = self.count_pdf_pages(input_pdf)
+        # print(f"Total number of pages in the PDF: {total_pages}")
 
 
 if __name__ == "__main__":
